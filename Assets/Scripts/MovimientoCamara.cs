@@ -1,42 +1,49 @@
 using UnityEngine;
-
 public class MovimientoCamara : MonoBehaviour
 {
     public float sensibilidad = 2f;
     public Transform cuerpoJugador;
-
     private float rotacionX = 0f;
+    private float rotacionY = 0f;
+    private bool camaraActiva = false;
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        // Resetear rotación de la cámara al empezar
         transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
         rotacionX = 0f;
+        rotacionY = 0f;
     }
 
     void Update()
     {
-        // Presionar ESC para desbloquear cursor
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            camaraActiva = false;
         }
 
-        // Obtener movimiento del mouse
+        // Activar cámara con click izquierdo
+        if (Input.GetMouseButtonDown(0))
+        {
+            camaraActiva = true;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
+        if (!camaraActiva) return; // No mover hasta que el jugador clickee
+
         float mouseX = Input.GetAxis("Mouse X") * sensibilidad;
         float mouseY = Input.GetAxis("Mouse Y") * sensibilidad;
 
-        // Rotar cámara arriba/abajo
         rotacionX -= mouseY;
-        rotacionX = Mathf.Clamp(rotacionX, -90f, 90f); // Limitar a 90 grados
+        rotacionX = Mathf.Clamp(rotacionX, -60f, 60f);
+
+        rotacionY += mouseX;
+        rotacionY = Mathf.Clamp(rotacionY, -60f, 60f); // 180° en total
 
         transform.localRotation = Quaternion.Euler(rotacionX, 0f, 0f);
-
-        // Rotar cuerpo del jugador izquierda/derecha
-        cuerpoJugador.Rotate(Vector3.up * mouseX);
+        cuerpoJugador.rotation = Quaternion.Euler(0f, rotacionY, 0f);
     }
 }

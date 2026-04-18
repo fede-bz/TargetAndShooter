@@ -30,21 +30,20 @@ public class Proyectil : MonoBehaviour
     {
         Debug.Log("¡Proyectil golpeó: " + collision.gameObject.name + "!");
 
-        // Buscar el objeto raíz (padre más alto)
         Transform objetivo = collision.transform;
-
-        // Subir en la jerarquía hasta encontrar el objeto raíz
         while (objetivo.parent != null)
         {
             objetivo = objetivo.parent;
         }
 
-        Debug.Log("Destruyendo objeto raíz: " + objetivo.name);
+        // Solo actuar si el objeto raíz es un enemigo
+        if (objetivo.CompareTag("Enemy"))
+        {
+            Debug.Log("Destruyendo objeto raíz: " + objetivo.name);
+            objetivo.gameObject.SetActive(false);
+        }
 
-        // Desactivar el objeto raíz completo (el soldado entero)
-        objetivo.gameObject.SetActive(false);
-
-        // Destruir el proyectil
+        // El proyectil siempre se destruye
         Destroy(gameObject);
     }
 }
